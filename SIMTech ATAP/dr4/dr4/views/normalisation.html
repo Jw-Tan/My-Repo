@@ -1,0 +1,85 @@
+﻿<html>
+<head>
+</head>
+<body>
+    <div style="padding:25px">
+        <h1>Matrix Normalisation Tool</h1>
+        <p></p>
+        <p ng-if="status === 'fetching'">
+            Fetching data from database. Please wait.
+        </p>
+
+        <p ng-if="status === 'no data'">
+            No data was detected in the database.<br />
+            Please click on 'Data Input' to upload data.
+        </p>
+
+        <label ng-if="status === 'has data'">
+            Timeframe:
+            <select ng-if="status === 'has data'" ng-model="data.selectedTimeFrame"
+                    ng-options="timeFrame for timeFrame in data.timeFrames"></select>
+        </label>
+        <select ng-if="data.selectedTimeFrame === 'By Year'" ng-model="data.selectedYear"
+                ng-options="year for year in yearsData"></select>
+        <select ng-if="data.selectedTimeFrame === 'By Month'" ng-model="data.selectedMonthNamed"
+                ng-options="month for month in monthsNamedData"></select>
+        <button ng-if="status === 'has data'" ng-click="buildMatrixSkeleton()">Confirm Timeframe</button>
+        <p ng-if="skeletonStatus === 'no data'">
+            No matrix skeleton detected in the database.<br />
+            Please upload one to proceed.
+        </p>
+        <button ng-if="normalisedMatrix.length" ng-click="startExport()">
+            Export to Excel spreadsheet
+            <i class="fa fa-download" style="color:green"></i>
+        </button>
+        <p></p>
+        <div ng-if="normalisedMatrixTrimmed.length && data.showTrimmedMatrix" style="overflow:auto">
+            <table border="1">
+                <tr ng-repeat="TrimmedRow in normalisedMatrixTrimmed">
+                    <td align="center" ng-repeat="TrimmedEntry in TrimmedRow track by $index">{{formatEntry(TrimmedEntry)}}</td>
+                </tr>
+            </table>
+            <br />
+        </div>
+        <div ng-if="normalisedMatrixTrimmed.length">
+            {{ data.resultsHeading }}
+            <br />
+            <br />
+            {{ data.resultsInputHeading }}
+            <table style="border-collapse: collapse; border: none;">
+                <tr ng-repeat="input in data.resultsInput" style="border: none;">
+                    <td style="border: none; padding-left: 0;">{{ input.name }}</td>
+                    <td style="border: none; padding-left: 0;">{{ input.amount.toFixed(3) }}kg</td>
+                </tr>
+            </table>
+            <br />
+            {{ data.resultsWasteHeading }}
+            <table style="border-collapse: collapse; border: none;">
+                <tr ng-repeat="waste in data.resultsWaste" style="border: none;">
+                    <td style="border: none; padding-left: 0;">{{ waste.name }}</td>
+                    <td style="border: none; padding-left: 0;">{{ waste.amount.toFixed(3) }}kg</td>
+                </tr>
+            </table>
+            <br />
+        </div>
+
+        <p ng-if="skeletonStatus === 'balancing complete'">Select the material you wish to normalise:</p>
+        <div ng-if="skeletonStatus === 'balancing complete'" ng-repeat="option in unitOptions">
+            <label>
+                <input type="radio" name="option.index" ng-value="option.index" ng-model="model.selectedIndex" />
+                {{option.name}} - ({{option.type}})
+            </label>
+        </div>
+        <div ng-if="skeletonStatus === 'balancing complete'">
+            <br />
+            <!-- min = 0 to prevent negative numbers, step=any to allow any decimal places-->
+            Units to normalise to: <input type="number" min=0 step="any" ng-model="model.unitAmount" ng-keydown="keydownFunction($event)" />
+            <button ng-disabled="!isValidChoice(model)" ng-click="startNormalisation()">Normalise</button>
+            <br />
+            <label ng-if="skeletonStatus === 'balancing complete'">
+                Show matrix? <input type="checkbox" ng-model="data.showTrimmedMatrix" />
+            </label>
+        </div>
+    </div>
+</body>
+</html>

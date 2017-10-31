@@ -1,0 +1,139 @@
+﻿<html>
+<head>
+    <style>
+        svg {
+            font: 10px sans-serif;
+        }
+
+        .bar rect {
+            shape-rendering: crispEdges;
+        }
+
+        .axis path, .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .line {
+            fill: none;
+            stroke-width: 1.5px;
+        }
+
+        .bar rect:hover {
+            fill: orangered;
+        }
+
+        .d3-tip {
+            line-height: 1;
+            font-weight: bold;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        /* Creates a small triangle extender for the tooltip */
+        .d3-tip:after {
+            box-sizing: border-box;
+            display: inline;
+            font-size: 10px;
+            width: 100%;
+            line-height: 1;
+            color: rgba(0, 0, 0, 0.8);
+            content: "\25BC";
+            position: absolute;
+            text-align: center;
+        }
+
+        /* Style northward tooltips differently */
+        .d3-tip.n:after {
+            margin: -1px 0 0 0;
+            top: 100%;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="pageheader">
+        <h2>Waste Hotspots</h2>
+        <p class="description"><!--put here--></p>
+        <div class="breadcrumb-wrapper hidden-xs">
+
+        </div>
+    </div>
+    <section id="main-content">
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" ng-controller="hotspotCtrl">
+                        <p ng-if="status === 'fetching'">
+                            Fetching data from database. Please wait.
+                        </p>
+
+                        <p ng-if="status === 'no data'">
+                            No data was detected in the database.<br />
+                            Please click on 'Data Input' to upload data.
+                        </p>
+
+                        <label ng-if="status === 'has data'">
+                            Timeframe:
+                            <select ng-if="status === 'has data'" ng-model="data.selectedTimeFrame"
+                                    ng-options="timeFrame for timeFrame in data.timeFrames"></select>
+                        </label>
+                        <select ng-if="data.selectedTimeFrame === 'By Year'" ng-model="data.selectedYear"
+                                ng-options="year for year in yearsData"></select>
+                        <select ng-if="data.selectedTimeFrame === 'By Month'" ng-model="data.selectedMonthNamed"
+                                ng-options="month for month in monthsNamedData"></select>
+                        <div>
+                            <label ng-if="status === 'has data'">
+                                Normalise Waste to per kg Output:
+                                <input type="checkbox" ng-model="data.normalise" />
+                            </label>
+                        </div>
+
+                        <button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-if="status === 'has data'" ng-click="beginHotspots()">Find Hotspots</button>
+
+                        <p></p>
+
+                        <div ng-if="data.showResults">
+                            <table border="1" ng-show="processes.length">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Waste-Generating Proccess</th>
+                                    <th>Waste Amount (kg)</th>
+                                    <th>Proportion</th>
+                                </tr>
+
+                                <tr ng-repeat="process in processes" ng-style="$index < numHotspots ? {'color': 'red'}:{}">
+                                    <td>{{ process.id }}</td>
+                                    <td>{{ process.name }}</td>
+                                    <td>{{ process.wasteAmount }}</td>
+                                    <td>{{ (process.wasteAmount / totalWasteAmount * 100).toFixed(2) }}%</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Total Amount:</td>
+                                    <td colspan="2">{{ showTotalWeight() }} kg</td>
+                                </tr>
+                            </table>
+
+                        </div>
+
+                        <p></p>
+
+                        <div ng-if="data.showResults">
+                            {{ resultString }}
+                        </div>
+
+                        <p></p>
+
+                        <!--<div pareto-chart></div>-->
+                        <div id="processChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,472 @@
+<style>
+    .container {
+        position: relative;
+        text-align: center;
+        color: black;
+        transform: translate(3%, 0%);
+    }
+
+    .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-54%, -66%);
+    }
+
+    .apple {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-54%, -14%);
+    }
+    .loader {
+        border: 20px solid #f3f3f3; /* Light grey */
+        border-top: 20px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 200px;
+        height: 200px;
+        animation: spin 1.5s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+<div class="pageheader">
+    <h2>Dashboard</h2>
+    <p class="description"><!--put here--></p>
+    <div class="breadcrumb-wrapper hidden-xs">
+        
+    </div>
+</div>
+
+<section ng-init="init()" id="main-content" style="overflow:visible">
+    <!-- this panel shows when the dashboard is still fetching info from the database -->
+    <div ng-if="state===States.checkingStatus" class="panel panel-default" style="padding-top:5%; padding-bottom:5%">
+        <div class="panel-body" style="height:80%; text-align:center">
+            <div style="margin:0 auto;" class="loader"></div>
+            <br /><br />
+            <p style="font-size:35px">Checking status...</p>
+        </div>
+    </div>
+    <!-- this panel shows when the program returns the boolean isInitialised as false -->
+    <div ng-if="state === States.uninitialised" class="panel panel-default" style="padding-top:5%; padding-bottom:5%">
+        <div class="panel-body" style="height:80%; text-align:center">
+            <p style="font-size: 50px">Welcome!</p><br /><br /><p style="font-size:20px">Let's start by clicking on the "Initialise" button below:&nbsp;
+</p> <br /><br /><br />
+            <button style="font-size:40px" class="btn btn-success" ui-sref="initialisation.initialisation">
+                Initialise 
+                <i class="fa icon-refresh"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- this panel shows when the program returns the boolean isInitialised as true, but hasEntry as false -->
+
+    <div ng-if="state===States.initialised" class="panel panel-default" style="padding-top:5%; padding-bottom:5%">
+        <div class="panel-body" style="height:80%; text-align:center">
+            <p style="font-size: 50px">Welcome!</p><br /><br /><p style="font-size:20px">
+                It looks like you do not have any data entries yet.
+                Let's proceed by clicking on the "Enter Data" button below:&nbsp;
+            </p> <br /><br /><br />
+            <button style="font-size:40px" class="btn btn-info" ui-sref='data.entry'>
+                Enter Data
+                <i class="fa fa-pencil"></i>
+            </button>
+        </div>
+    </div>
+    <!-- this panel shows when the program returns both the booleans isInitialised and hasEntry as true -->
+
+    <div ng-if="state === States.hasEntry" class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    {{descriptionText}}
+                    <div class="btn-group actions pull-right">
+                        <button id="daily" type="button" class="btn btn-info btn-trans" style="width:80px; border-color:lightgrey; background-color:#1f7bb6; color:white" ng-style="daily" ng-click="time=1;daily={'background-color':'#1f7bb6',color:'white'};monthly={};yearly={};main.toggleTimeframe('daily')">Daily</button>
+                        <button id="monthly" type="button" class="btn btn-info btn-trans" style="width:80px; border-color:lightgrey; background-color:#fafafa" ng-style="monthly" ng-click="time=7;daily={'background-color':'#fafafa',color:'#1f7bb6'};monthly={'background-color':'#1f7bb6',color:'white'};yearly={};main.toggleTimeframe('monthly')">Monthly</button>
+                        <button id="yearly" type="button" class="btn btn-info btn-trans" style="width:80px; border-color:lightgrey; background-color:#fafafa" ng-style="yearly" ng-click="time=0;yearly={'background-color':'#1f7bb6',color:'white'};daily={'background-color':'#fafafa',color:'#1f7bb6'};monthly={};main.toggleTimeframe('yearly')">Yearly</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- this panel shows when the program returns both the booleans isInitialised and hasEntry as true -->
+
+    <div ng-if="state === States.hasEntry" class="row" style="height:500px">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="panel panel-default" id="wasteAmtPanel" ng-controller="wasteAmtCtrl">
+                        <div class="panel-body" style="padding-right:20px" ng-init="init()">
+                            <b>{{chosenTime.title}} Waste Amount (Kg)</b>
+                            <span class="fa fa-info-circle pull-right" data-toggle="tooltip" data-original-title="{{definition}}"></span>
+                            <hr />
+                            <div class="center" id="chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="height:40%">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="panel panel-default" ng-controller="carbonFPCtrl" ng-init="init()">
+                        <div class="panel-body" style="padding-right:20px;">
+                            <b>Carbon Footprint (Incineration)</b>
+                            <span style="float:right" class="fa fa-info-circle" data-toggle="tooltip" data-original-title="{{definition}}"></span>
+                            <hr />
+                            <img src="img/carbonFootprint.jpg" width="30%" />
+                            <font size="7"><b>{{carbonFP}} </b></font>Kg.CO<sub>2</sub>e
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="height:100%">
+                    <div class="panel panel-default" ng-controller="wasteCostCtrl" ng-init="init()">
+                        <div ng-hide="displayUninitialised" class="panel-body" style="padding-right:20px">
+                            <b>Cost of Waste</b>
+                            <span style="float:right" class="fa fa-info-circle" data-toggle="tooltip" data-original-title="{{definition}}"></span>
+                            <hr />
+                            <div class="row">
+                                <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5" style="display:table-cell; vertical-align:middle; text-align:center">
+                                    <img src="img/cashbag.png" style="width: 65%" />
+                                </div>
+                                <div style="padding-left:0px; padding-right:0px" class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+                                    <font size="7"><b>{{wasteCost}} </b></font> SGD
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-show="displayUninitialised" class="panel-body" style="padding-right:20px">
+                            <b>Cost of Waste</b>
+                            <span style="float:right" class="fa fa-info-circle" data-toggle="tooltip" data-original-title="{{definition}}"></span>
+                            <hr />
+                            <div class="row">
+                                <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5" style="display:table-cell; vertical-align:middle; text-align:center">
+                                    <img src="img/cashbag.png" style="width: 65%" />
+                                </div>
+                                <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+                                    Please go to initialisation page to initialise :)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="panel panel-default" ng-controller="processEffCtrl" ng-init="init()">
+                <div class="panel-body" style="padding-right:20px">
+                    <b>Most Inefficient Processes ({{chosenTime.title}})</b>
+                    <span class="fa fa-info-circle pull-right" data-toggle="tooltip" data-original-title="{{definition}}"></span>
+                    <hr />
+                    <div ng-if="selectedTimeArray.length > 0" class="panel-body">
+                        <div style="text-align:left">
+                            <b>Process Efficiency:</b>
+                        </div>
+                    </div>
+                    <div ng-show="selectedTimeArray.length > 0" class="panel-body" style="overflow:visible">
+                        <div class="row">
+                            <div ng-show="selectedTimeArray.length" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                                <div class="panel-body">
+                                    <div>
+                                        <div class="center" id="processEff1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-show="selectedTimeArray.length >= 2" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                                <div class="panel-body">
+                                    <div>
+                                        <div class="center" id="processEff2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-show="selectedTimeArray.length >= 3" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                                <div class="panel-body">
+                                    <div>
+                                        <div class="center" id="processEff3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="selectedTimeArray.length > 0" class="panel-body">
+                        <div style="text-align:left">
+                            <b>Total Waste Amount:</b>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div ng-if="selectedTimeArray.length === 0" class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center; padding:1px 1px 1px 1px">
+                                There are no processes with collected information for the selected timeframe.
+                            </div>
+                        </div>
+                        <div ng-if="selectedTimeArray.length>0" class="row">
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center; padding:1px 1px 1px 1px">
+                                <div ng-if="selectedTimeArray.length" class="container" style="width:auto">
+                                    <img src="img/trashbin3.png">
+                                    <div class="centered">
+                                        <font size="6"><b>{{selectedTimeArray[0].waste}}</b></font>
+                                        <br />
+                                        <font size="4"><b style="color: #fff">KG</b></font>
+                                    </div>
+                                </div>
+                                <div ng-hide="selectedTimeArray.length" style="padding-left:15px; padding-right:15px">
+                                    There <span ng-show="selectedTimeArray.length === 1">is only 1 process </span>
+                                    <span ng-show="selectedTimeArray.length === 0">are no processes </span>
+
+                                    <span ng-show="selectedTimeArray.length === 2">are only 2 processes </span>
+                                    with collected information for the selected timeframe.
+                                </div>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center; padding:1px 1px 1px 1px">
+                                <div ng-if="selectedTimeArray.length >= 2" class="container" style="width:auto">
+                                    <img src="img/trashbin3.png">
+                                    <div class="centered">
+                                        <font size="6"><b>{{selectedTimeArray[1].waste}}</b></font>
+                                        <br />
+                                        <font size="4"><b style="color: #fff">KG</b></font>
+                                    </div>
+                                </div>
+                                <div ng-hide="selectedTimeArray.length >= 2" style="padding-left:15px; padding-right:15px">
+                                    There <span ng-show="selectedTimeArray.length === 1">is only 1 process </span>
+                                    <span ng-show="selectedTimeArray.length === 0">are no processes </span>
+
+                                    <span ng-show="selectedTimeArray.length === 2">are only 2 processes </span>
+                                    with collected information for the selected timeframe.
+                                </div>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center; padding:1px 1px 1px 1px">
+                                <div ng-if="selectedTimeArray.length >= 3" class="container" style="width:auto">
+                                    <img src="img/trashbin3.png">
+                                    <div class="centered">
+                                        <font size="6"><b>{{selectedTimeArray[2].waste}}</b></font>
+                                        <br />
+                                        <font size="4"><b style="color: #fff">KG</b></font>
+                                    </div>
+                                </div>
+                                <div ng-hide="selectedTimeArray.length >= 3" style="padding-left:15px; padding-right:15px">
+                                    There <span ng-show="selectedTimeArray.length === 1">is only 1 process </span>
+                                    <span ng-show="selectedTimeArray.length === 0">are no processes </span>
+
+                                    <span ng-show="selectedTimeArray.length === 2">are only 2 processes </span>
+                                    with collected information for the selected timeframe.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+                <div class="panel-body">
+                    <div class="row">
+                        <div ng-if="selectedTimeArray.length" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <div style="text-align:center">
+                                <b>{{selectedTimeArray[0].processName}}</b>
+                            </div>
+                        </div>
+                        <div ng-if="selectedTimeArray.length >=2" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <div style="text-align:center">
+                                <b>{{selectedTimeArray[1].processName}}</b>
+                            </div>
+                        </div>
+                        <div ng-if="selectedTimeArray.length>=3" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <div style="text-align:center">
+                                <b>{{selectedTimeArray[2].processName}}</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- this panel shows when the program returns both the booleans isInitialised and hasEntry as true -->
+
+    <div ng-if="state === States.hasEntry" class="row" ng-controller="hotspotsDBCtrl" ng-init="init()">
+        <!-- for normalised hotspots -->
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-body" style="padding-right:20px">
+                    <b>Top 3 Aggregated Hotspots ({{chosenTime.title}})</b>
+                    <span class="fa fa-info-circle pull-right" data-toggle="tooltip" data-original-title="{{aggregated}}"></span>
+                    <hr />
+
+                    <div class="panel-body">
+                        <div ng-if="selectedTimeArrayA.length === 0" class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center; padding:1px 1px 1px 1px">
+                                There are no processes with collected information for the selected timeframe.
+                            </div>
+                        </div>
+                        <div ng-if="selectedTimeArrayA.length>0" class="row">
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center; padding:1px 1px 1px 1px">
+                                <div ng-if="selectedTimeArrayA.length" class="container" style="width:auto">
+                                    <img src="img/trashbin3.png">
+                                    <div class="centered">
+                                        <font size="6"><b>{{selectedTimeArrayA[0].waste}}</b></font>
+                                        <br />
+                                        <font size="4"><b style="color: #fff">KG</b></font>
+                                    </div>
+                                </div>
+                                <div ng-hide="selectedTimeArrayA.length" style="padding-left:15px; padding-right:15px">
+                                    <div style="padding-top:30%">
+                                        There <span ng-show="selectedTimeArrayA.length === 1">is only 1 process </span>
+                                        <span ng-show="selectedTimeArrayA.length === 0">are no processes </span>
+                                        <span ng-show="selectedTimeArrayA.length === 2">are only 2 processes </span>
+                                        with collected information for the selected timeframe.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center; padding:1px 1px 1px 1px">
+                                <div ng-if="selectedTimeArrayA.length >= 2" class="container" style="width:auto">
+                                    <img src="img/trashbin3.png">
+                                    <div class="centered">
+                                        <font size="6"><b>{{selectedTimeArrayA[1].waste}}</b></font>
+                                        <br />
+                                        <font size="4"><b style="color: #fff">KG</b></font>
+                                    </div>
+                                </div>
+                                <div ng-hide="selectedTimeArrayA.length >= 2" style="padding-left:15px; padding-right:15px">
+                                    <div style="padding-top:30%">
+                                        There <span ng-show="selectedTimeArrayA.length === 1">is only 1 process </span>
+                                        <span ng-show="selectedTimeArrayA.length === 0">are no processes </span>
+                                        <span ng-show="selectedTimeArrayA.length === 2">are only 2 processes </span>
+                                        with collected information for the selected timeframe.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center; padding:1px 1px 1px 1px">
+                                <div ng-if="selectedTimeArrayA.length >= 3" class="container" style="width:auto">
+                                    <img src="img/trashbin3.png">
+                                    <div class="centered">
+                                        <font size="6"><b>{{selectedTimeArrayA[2].waste}}</b></font>
+                                        <br />
+                                        <font size="4"><b style="color: #fff">KG</b></font>
+                                    </div>
+                                </div>
+                                <div ng-hide="selectedTimeArrayA.length >= 3" style="padding-left:15px; padding-right:15px">
+                                    <div style="padding-top:30%">
+                                        There <span ng-show="selectedTimeArrayA.length === 1">is only 1 process </span>
+                                        <span ng-show="selectedTimeArrayA.length === 0">are no processes </span>
+                                        <span ng-show="selectedTimeArrayA.length === 2">are only 2 processes </span>
+                                        with collected information for the selected timeframe.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="panel-body">
+                    <div class="row">
+                        <div ng-if="selectedTimeArrayA.length" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <div style="text-align:center">
+                                <b>{{selectedTimeArrayA[0].processName}}</b>
+                            </div>
+                        </div>
+                        <div ng-if="selectedTimeArrayA.length >=2" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <div style="text-align:center">
+                                <b>{{selectedTimeArrayA[1].processName}}</b>
+                            </div>
+                        </div>
+                        <div ng-if="selectedTimeArrayA.length>=3" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <div style="text-align:center">
+                                <b>{{selectedTimeArrayA[2].processName}}</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-body" style="padding-right:20px">
+                    <b>Top 3 Normalised Hotspots ({{chosenTime.title}})</b>
+                    <span class="fa fa-info-circle pull-right" data-toggle="tooltip" data-original-title="{{normalised}}"></span>
+                    <hr />
+                    <div class="panel-body">
+                        <div ng-if="selectedTimeArrayN.length === 0" class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="text-align:center; padding:1px 1px 1px 1px">
+                                There are no processes with collected information for the selected timeframe.
+                            </div>
+                        </div>
+                        <div ng-if="selectedTimeArrayN.length>0" class="row">
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center; padding:1px 1px 1px 1px">
+                                <div ng-if="selectedTimeArrayN.length" class="container" style="width:auto">
+                                    <img src="img/bitten-apple-1699634_960_720.png">
+                                    <div class="apple">
+                                        <font size="6"><b>{{selectedTimeArrayN[0].wasteIntensity}}</b></font>
+                                        <br />
+                                        <font size="4"><b style="color: #f2bf0e">KG</b></font>
+                                    </div>
+                                </div>
+                                <div ng-hide="selectedTimeArrayN.length" style="padding-left:15px; padding-right:15px">
+                                    <div style="padding-top:30%">
+                                        There <span ng-show="selectedTimeArrayN.length === 1">is only 1 process </span>
+                                        <span ng-show="selectedTimeArrayN.length === 0">are no processes </span>
+                                        <span ng-show="selectedTimeArrayN.length === 2">are only 2 processes </span>
+                                        with collected information for the selected timeframe.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center; padding:1px 1px 1px 1px">
+                                <div ng-if="selectedTimeArrayN.length >= 2" class="container" style="width:auto">
+                                    <img src="img/bitten-apple-1699634_960_720.png">
+                                    <div class="apple">
+                                        <font size="6"><b>{{selectedTimeArrayN[1].wasteIntensity}}</b></font>
+                                        <br />
+                                        <font size="4"><b style="color: #f2bf0e">KG</b></font>
+                                    </div>
+                                </div>
+                                <div ng-hide="selectedTimeArrayN.length >= 2" style="padding-left:15px; padding-right:15px">
+                                    <div style="padding-top:30%">
+                                        There <span ng-show="selectedTimeArrayN.length === 1">is only 1 process </span>
+                                        <span ng-show="selectedTimeArrayN.length === 0">are no processes </span>
+                                        <span ng-show="selectedTimeArrayN.length === 2">are only 2 processes </span>
+                                        with collected information for the selected timeframe.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="text-align:center; padding:1px 1px 1px 1px">
+                                <div ng-if="selectedTimeArrayN.length >= 3" class="container" style="width:auto">
+                                    <img src="img/bitten-apple-1699634_960_720.png">
+                                    <div class="apple">
+                                        <font size="6"><b>{{selectedTimeArrayN[2].wasteIntensity}}</b></font>
+                                        <br />
+                                        <font size="4"><b style="color: #f2bf0e">KG</b></font>
+                                    </div>
+                                </div>
+                                <div ng-hide="selectedTimeArrayN.length >= 3" style="padding-left:15px; padding-right:15px">
+                                    <div style="padding-top:30%">
+                                        There <span ng-show="selectedTimeArrayN.length === 1">is only 1 process </span>
+                                        <span ng-show="selectedTimeArrayN.length === 0">are no processes </span>
+                                        <span ng-show="selectedTimeArrayN.length === 2">are only 2 processes </span>
+                                        with collected information for the selected timeframe.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="panel-body">
+                    <div class="row">
+                        <div ng-if="selectedTimeArrayN.length" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <div style="text-align:center">
+                                <b>{{selectedTimeArrayN[0].processName}}</b>
+                            </div>
+                        </div>
+                        <div ng-if="selectedTimeArrayN.length >=2" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <div style="text-align:center">
+                                <b>{{selectedTimeArrayN[1].processName}}</b>
+                            </div>
+                        </div>
+                        <div ng-if="selectedTimeArrayN.length>=3" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <div style="text-align:center">
+                                <b>{{selectedTimeArrayN[2].processName}}</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+</section>

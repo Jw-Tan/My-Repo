@@ -1,0 +1,120 @@
+﻿<style>
+    table {
+    width: 100%;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius:5px;
+
+}
+
+th {
+
+    padding: 8px;
+    text-align: left;
+    border: 2px solid lightgrey;
+    background-color: #f7f7f7;
+    
+}
+
+td {
+    padding: 8px;
+    text-align: left;
+    border: 2px solid lightgrey;
+    background-color: white;
+}
+</style>
+<div style="margin-bottom: 0px" class="panel panel-default" ng-init="init()">
+    <div class="panel-body">
+        <h1 style="display: inline-block;">Food Waste Recommendations</h1>
+        <button style="display: inline-block; float:right; border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-show="hideKeywordSection" ng-click="enterKeywords()"><i class="fa fa-arrow-left"></i> Re-enter FLW name</button>
+        <div ng-hide="hideKeywordSection" id="keywordInputDisplay">
+            <br />
+            <p>Please input your FLW name/keywords that best describe it (e.g. orange peel) </p>
+            <br />
+            <input type="text" ng-model="flwKeywords" my-enter="saveKeywords()">
+            <button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-click="saveKeywords()">Submit</button><br>
+            <span ng-show="flwKeywords.length">FLW name: {{flwKeywords}}</span><br><br>
+        </div>
+
+        <div ng-show="hideKeywordSection" ng-switch="curDisplay">
+            <hr />
+            <div ng-switch-when="startNodeDisplay">
+                <div ng-show="displayStartFrom">
+                    <button ng-click="startFrom(1)">Edible Avoidable</button>
+                    <button ng-click="startFrom(2)">Edible Unavoidable</button>
+                    <button ng-click="startFrom(3)">Inedible Unavoidable</button>
+                </div>
+            </div>
+            <div ng-show="displayCurNode">
+                <button style="display: inline-block; margin-top:10px; float:right; border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-click="reset()">Reset</button>
+
+                <h2 ng-show="curDisplay === 'answerNodeDisplay'">Current Recommendation:<br /><br /></h2>
+                <span style="white-space: pre;">{{curNode.value}}</span>
+            </div>
+            <br />
+
+            <div ng-switch-when="answerNodeDisplay">
+                <button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-show="otherOptions" ng-click="getToNextNode()"> I want to look at other options </button>
+                <button style="display:inline-block;border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-show="displayBackButton" ng-click="goBack()">Back</button>
+
+            </div>
+
+            <div ng-switch-when="questionNodeDisplay">
+                <button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-click="getToYesNode()"> {{curNode.left}}</button>
+                <button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-click="getToNoNode()"> {{curNode.right}}</button>
+                <button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-show="dontKnow" ng-click="getToDontKnow()"> I'm not sure</button>
+                <button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-show="theRest" ng-click="getToTheRest()">The rest</button>
+                <button style="display:inline-block;border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-show="displayBackButton" ng-click="goBack()">Back</button>
+
+            </div>
+            <br />
+            
+            <div ng-show="causesChecked.avoidable.length|| causesChecked.unavoidable.length">
+                <hr />
+                <h3 style="line-height:2">List of Causes:</h3>
+
+                <table>
+                    <th ng-show="causesChecked.avoidable.length" style="text-align: left; width: 50%">Avoidable</th>
+                    <th ng-show="causesChecked.unavoidable.length" style="text-align: left; width: 50%">Unavoidable</th>
+                    <tr>
+                        <td ng-show="causesChecked.avoidable.length" style="vertical-align:top; width: 50%">
+                            <span ng-repeat="aCause in causesChecked.avoidable">
+                                {{aCause}}<br />
+                            </span>
+                        </td>
+                        <td ng-show="causesChecked.unavoidable.length" style="vertical-align:top; width: 50%">
+                            <span ng-repeat="uCause in causesChecked.unavoidable">
+                                {{uCause}}<br />
+                            </span>
+                        </td>
+                    </tr>
+
+
+                </table>
+            </div>
+            <div ng-show="redHist.length||ansHist.length">
+                <hr />
+                <h3 style="margin-top:15px; margin-bottom:10px">List of Recommendations:</h3>
+                <table>
+                    <th ng-show="redHist.length" style="text-align: left; width: 50%">Reduction</th>
+                    <th ng-show="ansHist.length" style="text-align: left; width: 50%">Diversion</th>
+                    <tr>
+                        <td ng-show="redHist.length" style="vertical-align:top; width: 50%">
+                            <span ng-repeat="reduction in redHist">
+                                {{reduction}}<br />
+                            </span>
+                        </td>
+                        <td ng-show="ansHist.length" style="vertical-align:top; width: 50%">
+                            <span ng-repeat="method in ansHist">
+                                {{method}}<br />
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <button style="border-radius:8px; margin-top:10px; padding-top:7px; padding-bottom:7px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-click="saveEvaluation()">
+            <span style="font-size:20px">Save results</span>
+            </button>
+        </div>
+    </div> 
+</div>

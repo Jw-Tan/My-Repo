@@ -1,0 +1,124 @@
+﻿<style>
+    .disabled-button {
+        display:inline-block; 
+        background-color:transparent; 
+        border: 1px solid darkgrey;
+    }
+    .toggle-button {
+        display:inline-block; 
+        background-color:transparent; 
+        border: 1px solid black;
+
+    }
+    .disabled-icon {
+        color: lightgrey;
+        border-color: lightgray;
+    }
+    .selected {
+        border-radius:4px; 
+        border: 1.5px solid darkgrey; 
+        width:185px;
+        background-color: lightgrey;
+    }
+    .unselected {
+        border-radius:4px; 
+        border: 1.5px solid lightgrey; 
+        width:185px;
+        background-color:whitesmoke; 
+    }
+    .button:hover {
+        background-color: lightgrey;
+    }
+</style>
+<div style="margin-bottom: 0px" class="panel panel-default" ng-init="init()">
+    <div class="panel-body">
+        <h1 style="display: inline-block;">Causal Analysis Checklist</h1>
+        <button style="display: inline-block; float:right; border-radius:4px; width:80px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-show="edibleCauses" ng-click="back()">
+            <i class="fa fa-arrow-left"></i> Back
+        </button>
+        <div ng-hide="edibleCauses">
+            <br />
+            <p>Is the food waste edible?</p>
+
+            <button style="border-radius:4px; width:70px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-click="executeEdible()">Yes</button>
+            <button style="border-radius:4px; width:70px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-click="executeInedible()">No</button>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div ng-show="edibleCauses">
+                            <p> Do you think the cause(s) could be related to: </p>
+
+                            <button ng-class="type=='peopleCauses'? 'selected': 'unselected'" ng-click="toggleCausesType('peopleCauses')"><i class="fa fa-user"></i><br />People?</button>
+                            <button ng-class="type=='machineCauses'? 'selected': 'unselected'" ng-click="toggleCausesType('machineCauses')"><i class="fa fa-wrench"></i><br />Tools?</button>
+                            <button ng-class="type=='methodCauses'? 'selected': 'unselected'" ng-click="toggleCausesType('methodCauses')"><i class="fa fa-cogs"></i><br />Methods?</button>
+                            <button ng-class="type=='materialCauses'? 'selected': 'unselected'" ng-click="toggleCausesType('materialCauses')"><i class="fa fa-pagelines"></i><br />Materials?</button>
+                            <hr ng-show="expandedCauses"/>
+
+                            <div ng-switch="type">
+
+                                <div style="display:inline-block" ng-switch-when="peopleCauses">
+
+                                    <h3 style="display:inline-block">People</h3>&nbsp;
+                                    <button ng-disabled="1-pageNum" ng-class="1-pageNum ? 'disabled-button' : 'toggle-button'" ng-click="goPrevCausePage()"><i ng-class="{'disabled-icon': 1-pageNum}" class="fa fa-angle-left"></i></button>
+                                    <button ng-disabled="pageNum" ng-class="pageNum ? 'disabled-button' : 'toggle-button'" ng-click="goNextCausePage()"><i ng-class="{'disabled-icon': pageNum}" class="fa fa-angle-right"></i></button>
+                                    <br /><br />
+                                    <p ng-repeat="cause in edibleCausesList.avoidable.ppl | startFrom:pageNum*4 |limitTo: 5">
+                                        <input type="checkbox" checklist-model="causesChecked.avoidable" checklist-value="cause"> {{cause}}<br />
+                                    </p>
+                                </div>
+
+                                <div style="display:inline-block" ng-switch-when="machineCauses">
+
+                                    <h3 style="display:inline-block">Machines and Tools</h3>&nbsp;
+                                    <button ng-disabled="1-pageNum" ng-class="1-pageNum ? 'disabled-button' : 'toggle-button'" ng-click="goPrevCausePage()"><i ng-class="{'disabled-icon': 1-pageNum}" class="fa fa-angle-left"></i></button>
+                                    <button ng-disabled="pageNum" ng-class="pageNum ? 'disabled-button' : 'toggle-button'" ng-click="goNextCausePage()"><i ng-class="{'disabled-icon': pageNum}" class="fa fa-angle-right"></i></button>
+                                    <br /><br />
+                                    <p ng-repeat="cause in edibleCausesList.unavoidable.mac | startFrom:pageNum*4 |limitTo: 5">
+                                        <input type="checkbox" checklist-model="causesChecked.unavoidable" checklist-value="cause"> {{cause}}<br />
+                                    </p>
+                                </div>
+
+                                <div style="display:inline-block" ng-switch-when="methodCauses">
+
+                                    <h3 style="display:inline-block">Methods and Processes</h3>&nbsp;
+                                    <button ng-disabled="1-pageNum" ng-class="1-pageNum ? 'disabled-button' : 'toggle-button'" ng-click="goPrevCausePage()"><i ng-class="{'disabled-icon': 1-pageNum}" class="fa fa-angle-left"></i></button>
+                                    <button ng-disabled="pageNum" ng-class="pageNum ? 'disabled-button' : 'toggle-button'"  ng-click="goNextCausePage()"><i ng-class="{'disabled-icon': pageNum}" class="fa fa-angle-right"></i></button>
+                                    <br /><br />
+                                    <p ng-repeat="cause in edibleCausesList.avoidable.met | startFrom:pageNum*4 |limitTo: 3">
+                                        <input type="checkbox" checklist-model="causesChecked.avoidable" checklist-value="cause"> {{cause}}<br />
+                                    </p>
+                                    <p ng-repeat="cause in edibleCausesList.unavoidable.met | startFrom:pageNum*4 |limitTo: 2">
+                                        <input type="checkbox" checklist-model="causesChecked.unavoidable" checklist-value="cause"> {{cause}}<br />
+                                    </p>
+                                </div>
+
+                                <div style="display:inline-block" ng-switch-when="materialCauses">
+
+                                    <h3 style="display:inline-block">Materials</h3>
+                                    <button ng-disabled="1-pageNum" class='disabled-button' ng-click="goPrevCausePage()"><i ng-class="{'disabled-icon': 1-pageNum}" class="fa fa-angle-left"></i></button>
+                                    <button ng-disabled="1-pageNum" class='disabled-button' ng-click="goNextCausePage()"><i ng-class="{'disabled-icon': 1-pageNum}" class="fa fa-angle-right"></i></button>
+                                    <br /><br />
+                                    <p ng-repeat="cause in edibleCausesList.unavoidable.mat">
+                                        <input type="checkbox" checklist-model="causesChecked.unavoidable" checklist-value="cause"> {{cause}}<br />
+                                    </p>
+                                </div>
+                                
+                            </div>
+                            <button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-show="expandedCauses" ng-click="compareScores()">Determine FLW Type</button> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p>
+            Type of FLW detected:
+            <a tooltip="{{flwType.definition}}">{{flwType.name}}</a>
+
+        </p>
+        <button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-show="hasFLWType" ng-click="goNext()">Find recommendations</button>
+        <button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-click="reset()">Reset</button>
+    </div>
+</div>

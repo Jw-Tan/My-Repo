@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+    <!-- note: using the local copy of font-awesome requires the folder named "fonts" to be present in project folder -->
+    <style>
+        .blank_row {
+            border-left-style: hidden;
+            border-right-style: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="padding:25px">
+        <h1>Data Input</h1>
+
+        <div style="margin-top:25px; margin-bottom:25px">
+            <p>Upload your data entries spreadsheet to database.</p>
+            <js-xls onread="readEntries" onerror="error"></js-xls>
+            Replace latest uploaded data? <input type="checkbox" ng-model="data.replaceLastUploaded" />
+            <p ng-if="entriesStatus === 'uploading'">Please wait while your data is uploaded to the database...</p>
+        </div>
+
+        <div ng-if="processInfoStatus === 'has data'">
+            Choose which process to submit data for:
+            <select ng-if="processInfoStatus === 'has data'" ng-model="data.selectedProcess"
+                    ng-options="process as process.name for process in processesList"></select>
+            <br />
+            Date: <input type="text" ng-model="data.date" placeholder="DD/MM/YYYY" />
+        </div>
+
+        <table ng-if="data.selectedProcess.name.length" style="margin-top:10px">
+            <tr ng-if="data.selectedProcess.inputs.length"><td colspan="2">Inputs:</td></tr>
+            <tr ng-repeat="material in data.selectedProcess.inputs track by $index">
+                <td>{{ material }}</td>
+                <td>
+                    <input type="number" min=0 step="any"
+                           ng-model="inputsToUpload[$index]" placeholder="Weight (kg)">
+                </td>
+            </tr>
+            <tr ng-if="data.selectedProcess.inputs.length" class="blank_row"><td colspan="2"></td></tr>
+            <tr ng-if="data.selectedProcess.outputs.length"><td colspan="2">Outputs:</td></tr>
+            <tr ng-repeat="material in data.selectedProcess.outputs track by $index">
+                <td>{{ material }}</td>
+                <td>
+                    <input type="number" min=0 step="any"
+                           ng-model="outputsToUpload[$index]" placeholder="Weight (kg)">
+                </td>
+            </tr>
+            <tr ng-if="data.selectedProcess.outputs.length"><td colspan="2" class="blank_row"></td></tr>
+            <tr ng-if="data.selectedProcess.wastes.length"><td colspan="2">Wastes:</td></tr>
+            <tr ng-repeat="material in data.selectedProcess.wastes track by $index">
+                <td>{{ material }}</td>
+                <td>
+                    <input type="number" min=0 step="any"
+                           ng-model="wastesToUpload[$index]" placeholder="Weight (kg)">
+                </td>
+            </tr>
+        </table>
+
+        <button ng-if="data.selectedProcess.name.length" ng-click="submitData()"
+                style="margin-top:10px">
+                Submit Entry
+        </button>
+        <p ng-if="appEntriesStatus === 'uploading'">Please wait while your data is uploaded to the database...</p>
+        <br /> 
+    </div>
+</body>
+</html>

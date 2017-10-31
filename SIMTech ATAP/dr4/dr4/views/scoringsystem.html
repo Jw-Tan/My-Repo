@@ -1,0 +1,58 @@
+﻿<div style="padding:25px" ng-init="init()">
+    <h1>Scoring System</h1>
+    <button ng-click="toggleWasteReductionScoreSection()">Waste Reduction Score =)</button>
+    <div ng-show="inputWasteReductionSection">
+        Year:
+        <select ng-model="tempYear" ng-options="year for year in years | filter: optionsFilter"></select>
+        <a ng-show="invalidYear" span style="color:red">(Please choose a year)</a>
+        <br />
+        <li>
+            Production Output: <input type="number" ng-model="tempProdOP">
+            <a ng-show="invalidP" span style="color:red">(Please ensure that production output is greater than 0)</a>
+        </li>
+
+        <li>
+            Waste Amount: <input type="number" ng-model="tempWaste">
+            <a ng-show="invalidW" span style="color:red">(Please ensure that waste amount is 0 or greater)</a>
+            <a ng-show="wasteMore" span style="color:red">(Please ensure that production output is equal to or greater than waste output)</a><br />
+        </li>
+        <a ng-show="editMsg" span style="color:green">(Please edit in the input boxes above)</a>
+        <button ng-click="toggleDiversionScoreSection()">Diversion Score =)</button>
+        <div ng-show="inputDiversionSection">
+            <li>Waste Diverted from Incineration: <input type="number" ng-model="tempInc"></li>
+            <a ng-show="invalidD" span style="color:red">(Please ensure that diversion amount is 0 or greater)</a>
+            <a ng-show="divertedMore" span style="color:red">(Please ensure that diversion amount is equal to or smaller than waste output)</a>
+        </div>
+        <button ng-hide="editMode" ng-click="addNewWastePropObject(tempYear, tempProdOP, tempWaste, tempInc)">Add new waste info</button>
+
+        <button ng-show="editMode" ng-click="editWastePropObject(tempYear, tempProdOP, tempWaste, tempInc, wasteSelected)">Save edited info</button>
+
+        <table>
+            <tr>
+                <th>Edit</th>
+                <th>Delete</th>
+                <th>Year</th>
+                <th>Production Output (kg)</th>
+                <th>Waste Output (kg)</th>
+                <th>Waste Proportion</th>
+                <th>Waste Reduction Score (%)</th>
+                <th>Waste Diverted (kg)</th>
+                <th>Incineration Score (%)</th>
+
+            </tr>
+
+            <tr ng-repeat="wasteObj in wasteObjects track by $index" ng-class="{selected: wasteObjects[$index] === wasteSelected}">
+                <td><button ng-click="edit(wasteObj)">Edit</button></td>
+                <td><button ng-hide="editMode && wasteObj==wasteSelected" ng-click="delete(wasteObj)">Remove</button></td>
+                <td>{{wasteObj.year}}</td>
+                <td>{{wasteObj.prodOP}}</td>
+                <td>{{wasteObj.waste}}</td>
+                <td>{{wasteObj.getScore()}}</td>
+                <td><a ng-show="wasteObj.showReductionScore">{{wasteObj.reductionScore}}</a></td>
+                <td><a ng-show="wasteObj.showIncScore">{{wasteObj.diverted}}</a></td>
+                <td><a ng-show="wasteObj.showIncScore">{{wasteObj.incScore()}}</a></td>
+            </tr>
+
+        </table>
+    </div>
+</div>

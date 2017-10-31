@@ -1,0 +1,18 @@
+﻿<div class="pageheader">
+    <h2>Hotspots Management Planning</h2>
+    <p class="description">Measures Recommendation</p>
+    <div class="breadcrumb-wrapper hidden-xs">
+        <span class="label">You are here:</span>
+        <ol class="breadcrumb">
+            <li class="active">Measures Recommendation</li>
+        </ol>
+    </div>
+</div>
+<span text-align="center" ng-repeat="tab in tabs track by $index" ng-class="{selectedTab: tabs[$index].title === currentTab.title}">
+    <a ui-sref="{{tab.state}}" ng-click="selectCurrent(tab)">{{tab.title}} <i class="{{tab.icon}}"></i>  </a>
+</span>
+<br />
+
+<section ng-init="init()" id="main-content">
+    <div ui-view></div>
+</section>

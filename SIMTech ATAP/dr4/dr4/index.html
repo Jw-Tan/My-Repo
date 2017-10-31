@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<!-- Application Name - app.js and Main controller - controller.js-->
+<html ng-app="neuboard" ng-controller="MainCtrl as main">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Page title - directive.js -->
+    <title page-title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/x-icon">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/simple-line-icons.css" rel="stylesheet">
+    <!--  CSS Animations -->
+    <link href="css/animate.css" rel="stylesheet">
+    <!--  CSS Main -->
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="css/tooltip.css" rel="stylesheet" />
+    <link href="css/ngDialog.css" rel="stylesheet" />
+    <link href="css/ngDialog-theme-default.css" rel="stylesheet" />
+    <link href="css/kendo.common.min.css" rel="stylesheet" />
+    <link href="css/kendo.flat.min.css" rel="stylesheet" />
+    <link href="css/kendo.mobile.all.min.css" rel="stylesheet" />
+    <link href="css/kendo.rtl.min.css" rel="stylesheet" />
+    <link href="css/kendo.silver.min.css" rel="stylesheet" />
+    <link href="css/percircle.css" rel="stylesheet" />
+
+    
+    <!--modal less-->
+    <!--<link href="css/modal.less" rel="stylesheet/less" type="text/css" />-->
+    
+    <style>
+        div.white-space-pre-line {
+            white-space: pre-line;
+        }
+        .selected {
+            background-color: yellow;
+        }
+        .selectedTab {
+            background-color: white;
+        }
+        table, th, td {
+            border: 1px solid grey;
+            border-collapse: collapse;
+            padding: 5px;
+            background-color: white;
+
+        }
+
+    </style>
+
+    <!-- Feature detection -->
+    <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="js/vendor/html5shiv.js"></script>
+    <script src="js/vendor/respond.min.js"></script>
+    <![endif]-->
+</head>
+<!-- Current state name -->
+<body class="{{$state.current.name}}">
+    <!-- Page Wrapper-->
+     <section id="main-wrapper" class="theme-dark-full">
+       <!-- Page wrapper -->
+        <header id="header" ng-include="'views/header.html'"></header>
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar sidebar-left" ng-include="'views/left-sidebar.html'"></aside>
+        <!-- Content wraper -->
+         <section class="main-content-wrapper">
+            <!-- Main content view  -->
+            <div ui-view></div>
+            <!-- Footer -->
+            <div ng-include="'views/footer.html'"></div>
+        </section>
+        <!-- /Content wraper-->
+    </section>
+    <!-- /Page wrapper-->
+    <!-- Right Sidebar Navigation -->
+    <aside ng-include="'views/right-sidebar.html'" id="sidebar-right"></aside>
+    <!-- /Left Sidebar Navigation -->
+    
+    <!-- jQuery -->
+    <script src="js/vendor/jquery-2.1.1.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/plugins/navgoco/jquery.navgoco.min.js"></script>
+    <!-- Pace JS -->
+    <script src="js/plugins/pace/pace.min.js"></script>
+    <!-- Custom  -->
+    <script src="js/custom.js"></script>
+    <!-- Angular -->
+    <script src="js/angular/angular.min.js"></script>
+    <script src="js/ui-router/angular-ui-router.min.js"></script>
+    <script src="js/bootstrap/ui-bootstrap-tpls-0.12.0.min.js"></script>
+
+    <!-- Helper Scripts -->
+    <script src="js/helpersScripts/angular-js-xlsx.js"></script>
+    <!--<script src="js/helpersScripts/angular.easypiechart.min.js"></script>-->
+    <script src="js/helpersScripts/Blob.js"></script>
+    <script src="js/helpersScripts/Chart.bundle.min.js"></script>
+    <script src="js/helpersScripts/angular-chart.min.js"></script>
+    <script src="js/helpersScripts/checklist-model.js"></script>
+    <script src="js/helpersScripts/d3.v3.min.js"></script>
+    <script src="js/helpersScripts/d3.tip.v0.6.3.js"></script>
+    <script src="js/helpersScripts/FileSaver.js"></script>
+    <script src="js/helpersScripts/numeric-1.2.6.min.js"></script>
+    <script src="js/helpersScripts/xlsx.full.min.js"></script>
+    <script src="js/helpersScripts/ngDialog.js"></script>
+    <script src="js/helpersScripts/kendo.all.min.js"></script>
+    <script src="js/helpersScripts/percircle.js"></script>
+
+    <!-- Angular Script -->
+   
+    <script src="js/datainput.js"></script>
+    <script src="js/hotspot.js"></script>
+    <script src="js/normalisation.js"></script>
+    <script src="js/hierarchy.js"></script>
+    <script src="js/constants.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/directives.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/hotspotService.js"></script>
+    <script src="js/initialisation.js"></script>
+
+    <script src="js/controllers/hierarchy/controller.checklist.js"></script>
+    <script src="js/controllers/hierarchy/controller.db.carbon.js"></script>
+    <script src="js/controllers/hierarchy/controller.db.hotspots.js"></script>
+    <script src="js/controllers/hierarchy/controller.db.processEffi.js"></script>
+    <script src="js/controllers/hierarchy/controller.db.wasteAmt.js"></script>
+    <script src="js/controllers/hierarchy/controller.db.wasteCost.js"></script>
+    <script src="js/controllers/hierarchy/controller.flowchart.js"></script>
+    <script src="js/controllers/hierarchy/controller.hotspoteval.timed.js"></script>
+
+    <script src="js/controllers/controller.datainput.js"></script>
+    <script src="js/controllers/controller.hotspot.js"></script>
+    <script src="js/controllers/controller.hotspoteval.timeless.js"></script>
+    <script src="js/controllers/controller.initialisation.js"></script>
+    <script src="js/controllers/controller.normalisation.js"></script>
+    <script src="js/controllers/controller.scoringsystem.js"></script>
+
+</body>
+
+</html>

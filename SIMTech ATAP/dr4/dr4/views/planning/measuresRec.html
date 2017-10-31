@@ -1,0 +1,83 @@
+﻿<div class="pageheader">
+    <h2>Measures Recommendation</h2>
+    <p class="description"><!--put here--></p>
+<div class="breadcrumb-wrapper hidden-xs">
+
+</div>
+</div>
+<section id="main-content">
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+            <div ng-init="init()">
+                <div ng-show="noProcesses" class="row">
+                    <div class="panel panel-default" style="padding-bottom:100px; padding-top:40px">
+                        
+                        <div class="panel-body" style="text-align:center;">
+                            <p style="font-size:6em;font-weight:bold;color:#27b6af">
+                                Oops...
+                            </p><br />
+                            <p style="font-size:18px">It looks like you have not identified any hotspots yet, please click the button below to proceed:</p>
+                            <br /><br />
+                            <span data-toggle="tooltip" data-original-title="Identify hotspots">
+                                <button class="btn btn-success" ui-sref="analysis.wasteHotspots">
+                                    <i style="font-size:35px" class="fa fa-bar-chart"></i>
+                                    <span style="font-size:25px">
+                                        Hotspot Analysis
+                                    </span>
+                                </button>
+                            </span>                          
+                        </div>
+                    </div>                 
+                </div>
+                <div ng-hide="noProcesses" class="row">
+                    <div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div style="height:550px" class="center" id="chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div style="height:550px" ng-hide="selectedProcess === null" id="piePanel">
+                                    <p><b>Selected Process: {{selectedProcess.name}}</b></p>
+                                    <hr />
+                                    <p ng-if="selectedProcess.id <= numOfHotspots">This process is a hotspot.</p>
+
+                                    <div class="center" id="pie"></div>
+
+                                    <!-- selected waste name -->
+                                    <p ng-hide="selectedWaste===null">Selected waste: {{selectedWaste.name}}</p>
+                                    <p ng-show="selectedWaste===null">Please click on a waste in the above pie chart.</p>
+                                    <!-- buttons -->
+                                    <span data-toggle="tooltip" data-original-title="{{evalButtonTooltip}}">
+                                        <button class="btn btn-success" style="width:31%; padding:5px 3px" ng-disabled="selectedWaste===null" ng-click="evaluate(selectedWaste)">
+                                            <i class="fa fa-search"></i><br />
+                                            Evaluate
+                                        </button>
+                                    </span>
+                                    <span data-toggle="tooltip" data-original-title="{{causeButtonTooltip}}">
+                                        <button class="btn btn-danger" style="width:31%; padding:5px 3px" ng-disabled="selectedWaste===null || selectedWaste.evaluated === 'No'" ng-click="viewCauses(selectedWaste)">
+                                            <i class="fa fa-puzzle-piece"></i><br />
+                                            Causes
+                                        </button>
+                                    </span>
+                                    <span data-toggle="tooltip" data-original-title="{{recButtonTooltip}}">
+                                        <button class="btn btn-info" style="width:35%; padding:5px 3px" ng-disabled="selectedWaste===null || selectedWaste.evaluated === 'No'" ng-click="viewRecommendations(selectedWaste)">
+                                            <i class="fa fa-lightbulb-o"></i><br />
+                                            Recommendations
+                                        </button>
+                                    </span>
+                                </div>
+                                <div ng-show="selectedProcess === null">
+                                    Please select a process on the right to evaluate or view its causes and recommendations.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

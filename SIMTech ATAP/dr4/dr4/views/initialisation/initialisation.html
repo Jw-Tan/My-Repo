@@ -1,0 +1,55 @@
+﻿<html>
+<head>
+
+</head>
+<body>
+    <div class="pageheader">
+        <h2>Initialisation</h2>
+        <p class="description"><!--put here--></p>
+        <div class="breadcrumb-wrapper hidden-xs">
+
+        </div>
+    </div>
+    <section id="main-content">
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" ng-controller="initialisationCtrl">
+                        <table style="border-collapse: collapse; border: none;">
+                            <tr>
+                                <td style="border: none;"> Average cost for producing 1kg of product:</td>
+                                <td style="border: none;">
+                                    <input type="number" min=0 step="any" ng-model="data.productionCost" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: none;"> Average cost for disposing 1kg of waste:</td>
+                                <td style="border: none;">
+                                    <input type="number" min=0 step="any" ng-model="data.disposalCost" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: none;"><button style="border-radius:4px; border:1.5px solid lightgrey; background-color:whitesmoke" ng-click="addAverageCosts()">Save</button></td>
+                            </tr>
+                        </table>
+
+                        <!--Average cost for producing 1kg of product:
+                        <input type="number" min=0 step="any" ng-model="data.productionCost"/>
+                        <br />
+                        Average cost for disposing 1kg of waste:
+                        <input type="number" min=0 step="any" ng-model="data.disposalCost" />
+                        <br />
+                        <button ng-click="addAverageCosts()">add costs</button>-->
+
+                        <div style="margin-top:25px">
+                            <p>Upload matrix skeleton and information about your processes.</p>
+                            <js-xls onread="readMatrix" onerror="error"></js-xls>
+                            <p ng-if="matrixStatus === 'uploading'">Please wait while your data is uploaded to the database...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
